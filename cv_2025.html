@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>cv_2025.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<!-- <div style="width: 1000px;"> -->
+<div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+<h1 id="romie-banerjee">Romie Banerjee</h1>
+<h2 id="personal-profile">Personal Profile:</h2>
+<ul>
+<li>Applied AI researcher with 5+ years of industry experience at <strong>Huawei Technologies</strong> (Germany)</li>
+<li>5+ years as academic faculty at the <strong>Indian Institute of Science Education and Research</strong> (India)</li>
+<li>PhD in mathematics from <strong>Johns Hopkins University</strong> (USA)</li>
+<li>Specialized in ML, Bayesian deep learning, AI interpretability, with applied research in <strong>uncertainty quantification</strong>, <strong>robust vision</strong>, <strong>LLM reliability</strong>, and <strong>LLMOps</strong></li>
+<li>Focus on solving problems around the safety of autonomous vehicles and AI-enabled software systems</li>
+</ul>
+<hr>
+<h2 id="%F0%9F%92%BC-professional-experience">💼 Professional Experience</h2>
+<h3 id="principal-engineer---senior-ai-safety-researcher"><strong>Principal Engineer - Senior AI Safety Researcher</strong></h3>
+<p><strong>Huawei Technologies Düsseldorf GmbH</strong><br>
+<em>Trustworthy Technologies and Engineering Lab, RAMS Division</em> | Munich, Germany<br>
+<em>(2021 – Present)</em></p>
+<h3 id="ai-safety-researcher"><strong>AI Safety Researcher</strong></h3>
+<p><strong>Huawei Technologies Düsseldorf GmbH</strong><br>
+<em>Trustworthy Technologies and Engineering Lab, RAMS Division</em> | Munich, Germany<br>
+<em>(2020 – 2021)</em></p>
+<h3 id="ml-engineer"><strong>ML Engineer</strong></h3>
+<p><strong>Bleenco GmbH</strong><br>
+<em>Tech Startup</em> | Munich, Germany<br>
+<em>(2019 – 2020)</em></p>
+<h3 id="assistant-professor"><strong>Assistant Professor</strong></h3>
+<p><strong>Indian Institute of Science Education and Research</strong>
+<em>Dept. of Mathematics</em> | Bhopal India
+<em>(2014-2019)</em></p>
+<!-- 
+- Taught undergraduate and graduate courses in Probability, Statistics, Algebra, Computer Science
+- Served as thesis advisor to two masters degree candidates and co-advisor to two PhD candidates
+- Academic publications: Topology and its Applications Elsevier (2013), AMS Joint Meetings Workshops (Boston 2014), New York Journal of Mathematics (2014), Journal of Homotopy and Related Structures , Springer (2017)
+- Invited talks at American Mathematical Society Joint Meetings Boston, Wayne State University and University of Regensburg -->
+<hr>
+<h2 id="%F0%9F%93%9A-education">📚 Education</h2>
+<p><strong>PhD in Mathematics</strong> | Johns Hopkins University | <em>2010</em></p>
+<!-- - Dissertation: *"On the ER(2)-cohomology of Real Projective Spaces"* -->
+<hr>
+<h2 id="%F0%9F%A7%A0-research--projects">🧠 Research &amp; Projects</h2>
+<hr>
+<h3 id="%F0%9F%9A%80-proprietary-work-huawei">🚀 Proprietary Work (Huawei)</h3>
+<h4 id="safety-of-ads-perception-system-iso-26262sotif-compliance"><strong>Safety of ADS perception system (ISO 26262/SOTIF Compliance)</strong></h4>
+<p><strong>Bayesian Uncertainty for BEV Object Detection</strong></p>
+<ul>
+<li>Developed fast Bayesian approximation for multi-sensor (LiDAR/camera) fusion for <em>post-hoc</em> (pre-trained models) and <em>instance-level</em> predictive uncertainty quantification</li>
+<li>We build on top of <strong>Bayesian Neural Networks</strong> and improve the prediction step for <strong>high-dimensional outputs</strong> (e.g., multi-object detection), outperforming sampling/gradient-based approaches in speed and fidelity,</li>
+<li>The solution is designed as a feature to be added to Huawei ADS sensor-fusion perception model and optimized with Huawei proprietary ADS datasets, with <strong>15-20% increase in AvU score (Accuracy vs. Uncertainty)</strong> over legacy estimators, and better reliability in OOD scenarios <em>(patent application in preparation)</em></li>
+</ul>
+<p><strong>Distributional shift detection and sensor cross-validation</strong></p>
+<ul>
+<li>Developed an <strong>OOD scenario detection system</strong> for autonomous driving systems (ADS) vision stacks using <strong>self-supervised learning (SIMCLR-based online anomaly detection)</strong> and <strong>sensor cross-validation system</strong> for fusion reliability monitoring, validated on <strong>ROS-CARLA</strong> simulation environments, in collaboration with external research partners.</li>
+</ul>
+<p><strong>Framework for Traffic Critical Scenario generation</strong></p>
+<ul>
+<li>Main reviewer of deliveries of a collaborative project with <em>Deutsche Forschungszentrum für Künstliche Intelligenz (DFKI)</em> to develop human-like pedestrian behavior	generation for <strong>sim2real autonomous vehicle training</strong>.</li>
+</ul>
+<!-- #### **Safety of LLM-based AI Systems/Agents**  
+  - Pursuing an **open-ended research program** in **Mechanistic Interpretability (MechInterp)** for transformers, with implications in **LLM reliability and safety**   -->
+<hr>
+<h3 id="%F0%9F%94%8D-open-source--public-projects">🔍 Open-Source &amp; Public Projects</h3>
+<p><strong><a href="">Estimating the Laplace-BNN predictive</a></strong></p>
+<ul>
+<li>A tutorial for Laplace-BNN inference and prediction. The objective is to explore estimation methods for Laplace-BNN predictives which produce <strong>post-hoc</strong> and <strong>instance-level</strong> uncertainties for high-dimensional output spaces. Examples with open-source models and datasets.</li>
+<li><em>Methods: Laplace approximation, KFAC, GLM, MC-GLM and LowRank-GLM</em></li>
+</ul>
+<p><strong><a href="">Transformer Circuit Analysis</a></strong></p>
+<ul>
+<li>Reverse-engineered attention heads in GPT-2-small to explain indirect object identification (IOI), replicating Anthropic’s findings.</li>
+<li><em>Methods: Activation patching, attention visualization (TransformerLens)</em></li>
+</ul>
+<p><strong><a href="">Observing superposition and SAE feature interpretation</a></strong></p>
+<ul>
+<li>Method to evaluate interpretations of <strong>sparse-autoencoder</strong> (SAE) latents for small GPT-style decoder only transformer models.</li>
+<li><em>Methods/Tools: TranformerLens, Neuronpedia, GemmaScope</em></li>
+</ul>
+<p><strong><a href="">Topological Invariants for CNNs</a></strong></p>
+<ul>
+<li>Design and code for <strong>persistent-homology</strong> guided CNNs to detect topological irregularities, with applications to improve performance on difficult/edge-case driving sensor input data.</li>
+<li><em>Methods: Persistent homology</em></li>
+</ul>
+<p><strong><a href="">Topological Neural Networks</a></strong></p>
+<ul>
+<li>Replication of work on topological data analysis of trained convolution layer filters, and implementation of TCNNs and their effect of generalization capacity</li>
+<li><em>Methods: persistent homology, Mapper, Topological-CNNs</em></li>
+</ul>
+<p><strong><a href="">Formal methods for verifying neural networks</a></strong></p>
+<ul>
+<li><strong>Robustness verification</strong> of neural networks using static analysis methods from <strong>Abstract Interpretation</strong>. Expanding existing work by using ellipsoid abstract domains, instead of zonotopes, for better scalability to large networks.</li>
+<li><em>Methods: AbstInt for AI</em></li>
+</ul>
+<p><strong><a href="">LLMOPs: Building, Tracking, and Deploying a RAG Pipeline</a></strong></p>
+<ul>
+<li>An end-to-end LLMOps workflow for a Retrieval-Augmented Generation (RAG) system, Using <strong>LangChain</strong> for pipeline orchestration, <strong>Weights &amp; Biases (WandB)</strong> for experiment tracking, and <strong>MLflow</strong> for model management</li>
+<li></li>
+</ul>
+<hr>
+<h3 id="%F0%9F%93%9C-publicationstechnical-writings-ml--math">📜 Publications/Technical Writings (ML &amp; math)</h3>
+<p><em>Towards Robust Perception Using Topological Invariants. AISafety@IJCAI 2021</em>* <em>[publication]</em></p>
+<p><em>Galois Descent for Real Spectra. Journal of Homotopy and related Structures</em> <em>[publication]</em></p>
+<p><em>A modular description of ER(2), New York Journal of Mathematics</em> <em>[publication]</em></p>
+<p><em>One the ER(2) cohomology of some odd-dimensional projective spaces</em> <em>[publication]</em></p>
+<p><em>Tannakization of quasi-categories and monadic descent</em> <em>[preprint]</em></p>
+<p><em>Why Mechanistic Interpretability Needs Toy Models</em>* <em>[blog]</em></p>
+<hr>
+<h3 id="%F0%9F%A7%A0-unpublishedexploratory-work">🧠 Unpublished/Exploratory Work</h3>
+<p><strong>RLAIF for Reward Hacking Mitigation</strong></p>
+<ul>
+<li>Simulated adversarial training to detect reward gaming in RLHF-aligned LLMs (PyTorch).</li>
+<li><em>Key insight: Early-stop gradient updates reduce overoptimization by 30% in toy tasks.</em></li>
+</ul>
+<p><strong>Tool: PyTorch Hook Manager</strong> <em>(WIP)</em></p>
+<ul>
+<li>Lightweight library for intervention workflows in mechinterp (GitHub: <code>private-repo</code>).</li>
+</ul>
+<hr>
+<h2 id="technical-expertise">Technical Expertise</h2>
+<ul>
+<li><strong>Machine Learning</strong>: Bayesian Deep Learning, Uncertainty Quantification, Robust ML, LLMs, Interpretability, Formal Methods.</li>
+<li><strong>Tools/Frameworks</strong>:
+<ul>
+<li><strong>ML</strong>: PyTorch, C++, Bayesian Inference libraries,</li>
+<li><strong>ADS</strong>: Open-mmlab, ROS, CARLA, Huawei DriveInsight</li>
+<li><strong>Interpretability</strong>: TransformerLens, Neuronpedia,</li>
+<li><strong>MLOPs/LLMOps</strong>: Docker, MLFlow, WandB, LangChain</li>
+</ul>
+</li>
+<li><strong>Domains</strong>: Autonomous Vehicles, LLMs</li>
+</ul>
+</div>
+</body>
+</html>
