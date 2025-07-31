@@ -3,8 +3,8 @@
 Welcome to my personal GitHub Pages website!
 
 ## Visit My Site
-👉 [View my homepage](https://romiebanejree.github.io)
-👉 [View my CV](https://romiebanejree.github.io/cv_2025.html)
+👉 [View my homepage](https://romiebanerjee.github.io)
+👉 [View my CV](https://romiebanerjee.github.io/cv_2025.html)
 
 
 ## Project Description
