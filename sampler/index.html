@@ -1,0 +1,1417 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2024 (Released January 1, 2024) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>An Estimator for the GLM predictive of a Kronecker-factored Laplace Bayesian Neural Network</TITLE>
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2024">
+
+<LINK REL="STYLESHEET" HREF="sampler.css">
+
+</HEAD>
+
+<BODY >
+<H1 class="CENTER">An Estimator for the GLM predictive of a Kronecker-factored Laplace Bayesian Neural Network</H1>
+<P class="CENTER"><STRONG>Romie Banerjee</STRONG>
+</P>
+<HR>
+<P>
+
+<H3>Abstract:</H3>
+<DIV CLASS="ABSTRACT">
+    A monte-carlo sampling based estimator for the predictive distribution of a Linearized Laplace Bayesian network, and its convergence properties. 
+
+<P>
+<SPAN  CLASS="textbf">Keywords:</SPAN> <SPAN  CLASS="textit">Bayesian neural network, Laplace Approximation, Kronecker factorization, monte-carlo sampling, Generalized linear model</SPAN> </DIV>
+<P>
+
+<P>
+
+<H1><A ID="SECTION00010000000000000000">
+<SPAN CLASS="arabic">1</SPAN> Introduction</A>
+</H1>
+
+<P>
+Given pre-trained model, one can <I>bayesianify</I> it by Laplace Approximation. This additional structure makes the model probabilistic and outputs predictive <I>distributions</I> (instead of point-set predictions). 
+There two components of going from a pre-trained model to probabilistic predictions using Laplace, are as follows:
+
+<P>
+The <B>posterior</B> is approximated by a Gaussian using Laplace Approximation, which reduces to calculating the Hessian of the loss function of the network, i.e. the second order information of the loss landscape.
+The Hessian is further simplified by the Generalized-Gauss-Newton (GGN) approximation, this reduces the second order calculation to a product of first-order calculations. In practice this is realized as the empirical fisher of the model. 
+The kronecker-factored-approximate-curvature (KFAC) uses layer-wise kronecker factorization of the empirical fisher. 
+
+<P>
+The <B>predictive</B> admits no simple closed form formula since the feed-forward function is not explicit. So we estimate it, either directly by monte-carlo sampling from the posterior and then applying feed-forward, 
+or by linearizing the feed-forward function (linearized Laplace).
+
+<P>
+
+<UL>
+<LI><B>Monte Carlo Integration</B>: an estimator for the true Laplace-BNN predictive
+</LI>
+<LI><B>Generalized Linear Model (GLM)</B>: a closed form solution to the <I>linearized</I> Laplace-BNN
+    
+</LI>
+</UL>
+
+<P>
+<B>Estimating the GLM predictive</B>
+Given an input <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>, a pre-trained network <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img2.svg"
+ ALT="$\theta_*$"></SPAN> and the network function <!-- MATH
+ $f_{\theta_*}(-)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img3.svg"
+ ALT="$f_{\theta_*}(-)$"></SPAN>, 
+the GLM predictive is given by <P><!-- MATH
+ \begin{displaymath}
+P(y|x) = \mathcal{N}(f_{\theta_*}(x), J(x)*\Sigma*J(x)^T)
+\end{displaymath}
+ -->
+</P><DIV CLASS="displaymath">
+<IMG
+ STYLE="height: 2.87ex; vertical-align: -0.70ex; " SRC="img4.svg"
+ ALT="$\displaystyle P(y\vert x) = \mathcal{N}(f_{\theta_*}(x), J(x)*\Sigma*J(x)^T)$">
+</DIV><P></P>
+where <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img5.svg"
+ ALT="$\Sigma$"></SPAN> is the covariance of the Laplace approximation normal distribution of the bayesian posterior and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> is the jacobian of the function <!-- MATH
+ $f_{\theta}(x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img7.svg"
+ ALT="$f_{\theta}(x)$"></SPAN> w.r.t. <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img8.svg"
+ ALT="$\theta$"></SPAN> at <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img2.svg"
+ ALT="$\theta_*$"></SPAN>. 
+While the covariance <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img5.svg"
+ ALT="$\Sigma$"></SPAN> is computed offline (same for all inputs <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>), the jacobian <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> must be computed online. This is expensive when <!-- MATH
+ $f_{\theta}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img9.svg"
+ ALT="$f_{\theta}$"></SPAN> is high-dimensional.
+
+<P>
+We introduce a Monte-carlo estimator for the GLM predictive obtained through sampling from the Gaussian posterior.
+The jacobian <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> gets replaced by a low-rank and base-changed version <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img10.svg"
+ ALT="$A(x)$"></SPAN> and the predictive covariance is estimated as <P><!-- MATH
+ \begin{displaymath}
+A(x)*A(x)^T \approx J(x)*\Sigma*J(x)^T
+\end{displaymath}
+ -->
+</P><DIV CLASS="displaymath">
+<IMG
+ STYLE="height: 2.87ex; vertical-align: -0.70ex; " SRC="img11.svg"
+ ALT="$\displaystyle A(x)*A(x)^T \approx J(x)*\Sigma*J(x)^T$">
+</DIV><P></P>
+
+<P>
+The columns of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img10.svg"
+ ALT="$A(x)$"></SPAN> are the <SPAN  CLASS="textit">directional derivatives</SPAN> of <!-- MATH
+ $f(x,\theta)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img12.svg"
+ ALT="$f(x,\theta)$"></SPAN> along the monte-carlo sample directions, and are approximated numerically. 
+Unlike the rows of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> which are gradients of the same functions (along standard basis dimensions of the model weight space) and are calculated with <SPAN  CLASS="textit">symbolic differentiation</SPAN>.
+This makes computation less reliable on repeated <SPAN  CLASS="textit">backprop</SPAN> calls (for a single <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>) and can be possibly parallelized (due to the fixed sample size). 
+
+<P>
+We also derive convergence properties of this estimator and discuss bounds for optimal number of samples.
+
+<P>
+
+<H1><A ID="SECTION00020000000000000000">
+<SPAN CLASS="arabic">2</SPAN> Bayesian Neural Networks</A>
+</H1>
+
+<P>
+A Bayesian neural network (BNN) consists of a (differentiable) map <!-- MATH
+ $f:X \times \Theta \to Y$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img13.svg"
+ ALT="$f:X \times \Theta \to Y$"></SPAN>, where the spaces <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img14.svg"
+ ALT="$X$"></SPAN>, <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img15.svg"
+ ALT="$\Theta$"></SPAN> and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img16.svg"
+ ALT="$Y$"></SPAN> and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img16.svg"
+ ALT="$Y$"></SPAN> are respectively the input, model weights and output spaces. The spaces are isomorphic as affine spaces to <!-- MATH
+ $X \simeq \mathbb{R}^n$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.83ex; vertical-align: -0.12ex; " SRC="img17.svg"
+ ALT="$X \simeq \mathbb{R}^n$"></SPAN>, <!-- MATH
+ $\Theta \simeq \mathbb{R}^w$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.83ex; vertical-align: -0.12ex; " SRC="img18.svg"
+ ALT="$\Theta \simeq \mathbb{R}^w$"></SPAN> and <!-- MATH
+ $Y \simeq \mathbb{R}^d$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.20ex; vertical-align: -0.12ex; " SRC="img19.svg"
+ ALT="$Y \simeq \mathbb{R}^d$"></SPAN>. The mapping <!-- MATH
+ $(x,\theta) \mapsto f(x,\theta)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img20.svg"
+ ALT="$(x,\theta) \mapsto f(x,\theta)$"></SPAN> expresses the evaluation of a model <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img8.svg"
+ ALT="$\theta$"></SPAN> on the input <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>. (Note: In this formulation, the aleatoric predictive is suppressed by considering on point-valued functions <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img21.svg"
+ ALT="$f$"></SPAN>.). In this setup, a regular feed-forward network is a BNN with a fixed choice of weights, for example <!-- MATH
+ $\theta = \theta_*$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img22.svg"
+ ALT="$\theta = \theta_*$"></SPAN>. We can denote the resulting network as a function <!-- MATH
+ $f_{\theta_*}:X \to Y$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.42ex; vertical-align: -0.70ex; " SRC="img23.svg"
+ ALT="$f_{\theta_*}:X \to Y$"></SPAN>, <!-- MATH
+ $f_{\theta_*}(x) = f(x, \theta_*)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img24.svg"
+ ALT="$f_{\theta_*}(x) = f(x, \theta_*)$"></SPAN>. 
+The weights space <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img15.svg"
+ ALT="$\Theta$"></SPAN> is equipped with a probability measure, the posterior distribution (usually intractable) <!-- MATH
+ $P(\theta | D)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img25.svg"
+ ALT="$P(\theta \vert D)$"></SPAN>. The mode of the posterior, 
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\theta_{\text{MAP}} = \text{argmin}_{\theta \in W} \log P(D|\theta)  + \log P(\theta)
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.66ex; vertical-align: -0.81ex; " SRC="img26.svg"
+ ALT="$\displaystyle \theta_{\text{MAP}} = \text{argmin}_{\theta \in W} \log P(D\vert\theta) + \log P(\theta)$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">1</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+is usually estimated using empirical risk minimization. Given.e..g., an i.i.d. classification data-set <!-- MATH
+ $D:= {(x_n, y_n) \in X \times Y}_{n=1}^N$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.20ex; vertical-align: -0.81ex; " SRC="img27.svg"
+ ALT="$D:= {(x_n, y_n) \in X \times Y}_{n=1}^N$"></SPAN>, the weights <!-- MATH
+ $\theta\in \Theta$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.93ex; vertical-align: -0.21ex; " SRC="img28.svg"
+ ALT="$\theta\in \Theta$"></SPAN> are trained to minimize the regularized empirical risk <!-- MATH
+ $\mathcal{L}(D;\theta) = \log P(D|\theta)  + \log P(\theta)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img29.svg"
+ ALT="$\mathcal{L}(D;\theta) = \log P(D\vert\theta) + \log P(\theta)$"></SPAN>.
+
+<P>
+The predictive distribution <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img30.svg"
+ ALT="$P(y\vert x)$"></SPAN> on the output space <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img16.svg"
+ ALT="$Y$"></SPAN> is the push-forward probability measure of <!-- MATH
+ $P(\theta|D)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img25.svg"
+ ALT="$P(\theta \vert D)$"></SPAN> under the map <!-- MATH
+ $f(x, -):\Theta \to Y$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img31.svg"
+ ALT="$f(x, -):\Theta \to Y$"></SPAN>.  
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+P(y|x) = f(x,-)_* P(\theta|D)
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img32.svg"
+ ALT="$\displaystyle P(y\vert x) = f(x,-)_* P(\theta\vert D)$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">2</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+The (bayesian) prediction <!-- MATH
+ $\hat{f}(x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.03ex; vertical-align: -0.70ex; " SRC="img33.svg"
+ ALT="$\hat{f}(x)$"></SPAN> is the mean of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img30.svg"
+ ALT="$P(y\vert x)$"></SPAN>, i.e. 
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\hat{f}(x) =\mathbb{E}_{y \sim P(y|x)}[y] =  \mathbb{E}_{\theta \sim P(\theta|D)}\left[ f(x, \theta) \right]
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.27ex; vertical-align: -0.94ex; " SRC="img34.svg"
+ ALT="$\displaystyle \hat{f}(x) =\mathbb{E}_{y \sim P(y\vert x)}[y] = \mathbb{E}_{\theta \sim P(\theta\vert D)}\left[ f(x, \theta) \right]$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">3</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+The predictive uncertainty is the (co)variance of the predictive distribution <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img30.svg"
+ ALT="$P(y\vert x)$"></SPAN>, i.e., 
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\text{unc}(\hat{f}(x)) = \text{cov}_{y \sim P(y|x)}[y] =  \text{cov}_{\theta \sim P(\theta|D)} \left[ f(x, \theta) \right]
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH">unc<IMG
+ STYLE="height: 3.03ex; vertical-align: -0.70ex; " SRC="img35.svg"
+ ALT="$\displaystyle (\hat{f}(x)) =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img36.svg"
+ ALT="$\displaystyle _{y \sim P(y\vert x)}[y] =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img37.svg"
+ ALT="$\displaystyle _{\theta \sim P(\theta\vert D)} \left[ f(x, \theta) \right]$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">4</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+
+<H1><A ID="SECTION00030000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Monte Carlo Integration for BNNs</A>
+</H1>
+The Monte-Carlo estimate of predictive distribution is obtained by first sampling weights <!-- MATH
+ $\theta_1, \cdots, \theta_k \sim P(\theta|D)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img38.svg"
+ ALT="$\theta_1, \cdots, \theta_k \sim P(\theta\vert D)$"></SPAN>. This produces samples from the predictive distribution <!-- MATH
+ $\{ f(x, \theta_i) \}_{i=1}^k \sim P(y|x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.80ex; vertical-align: -0.72ex; " SRC="img39.svg"
+ ALT="$\{ f(x, \theta_i) \}_{i=1}^k \sim P(y\vert x)$"></SPAN>. Compute the sample mean to estimate the Bayesian prediction 
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\overline{\hat{f}(x)} = \frac{1}{k} \sum_{i=1}^{k} f(x, \theta_i) \in \mathbb{R}^d
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.44ex; vertical-align: -3.09ex; " SRC="img40.svg"
+ ALT="$\displaystyle \overline{\hat{f}(x)} = \frac{1}{k} \sum_{i=1}^{k} f(x, \theta_i) \in \mathbb{R}^d$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">5</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+Compute the sample covariance to estimate the predictive predictive 
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\overline{\text{unc}(\hat{f}(x))} = \frac{1}{k-1} \sum_{i=1}^k f(x, \theta_i) f(x, \theta_i)^T \in \mathbb{R}^{d\times d}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.44ex; vertical-align: -3.09ex; " SRC="img41.svg"
+ ALT="$\displaystyle \overline{\text{unc}(\hat{f}(x))} = \frac{1}{k-1} \sum_{i=1}^k f(x, \theta_i) f(x, \theta_i)^T \in \mathbb{R}^{d\times d}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">6</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+One successful method following this principle is MCDropout [<A
+ HREF="sampler.html#gal2015bayesian">2</A>,<A
+ HREF="sampler.html#gal2016dropout">1</A>], where the posterior is estimated by variational inference on Bernoulli distributions. 
+One disadvantage of the MC sampling method is that it is not post-hoc as the estimated <!-- MATH
+ $\overline{\text{unc}(\hat{f}(x))}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.49ex; vertical-align: -0.70ex; " SRC="img42.svg"
+ ALT="$\overline{\text{unc}(\hat{f}(x))}$"></SPAN> is an predictive for the Bayesian prediction <!-- MATH
+ $\overline{\hat{f}(x)}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.49ex; vertical-align: -0.70ex; " SRC="img43.svg"
+ ALT="$\overline{\hat{f}(x)}$"></SPAN> which in general does not equal to the original MAP prediction <!-- MATH
+ $f(x, \theta_{\text{MAP}})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img44.svg"
+ ALT="$f(x, \theta_{\text{MAP}})$"></SPAN>.
+
+<P>
+
+<H1><A ID="SECTION00040000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Laplace Approximation</A>
+</H1>
+([<A
+ HREF="sampler.html#mackay">5</A>]) Laplace approximation replaces the bayesian posterior with a normal distribution with <!-- MATH
+ $\theta_{\text{MAP}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img45.svg"
+ ALT="$\theta_{\text{MAP}}$"></SPAN> as mean, <!-- MATH
+ $P(\theta | D) \sim_{LA} \mathcal{N}(\theta_{\text{MAP}}, \Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img46.svg"
+ ALT="$P(\theta \vert D) \sim_{LA} \mathcal{N}(\theta_{\text{MAP}}, \Sigma)$"></SPAN>, where the covariance  <!-- MATH
+ $\Sigma\in  \mathbb{R}^{w\times w}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.17ex; vertical-align: -0.21ex; " SRC="img47.svg"
+ ALT="$\Sigma\in \mathbb{R}^{w\times w}$"></SPAN> is the inverse of the Hessian 
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\Sigma := \left(\left.\frac{\partial^2}{\partial\theta^2} \mathcal{L}(D;\theta)\right\vert_{\theta_{\text{MAP}}}\right)^{-1}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.65ex; vertical-align: -3.02ex; " SRC="img48.svg"
+ ALT="$\displaystyle \Sigma := \left(\left.\frac{\partial^2}{\partial\theta^2} \mathcal{L}(D;\theta)\right\vert_{\theta_{\text{MAP}}}\right)^{-1}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">7</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+This is second-order derivative calculation is often replaced in practice by the products of first-order derivatives , i.e. Generalized-Gauss-Newton approximation or equivalently the Fisher information matrix; the covariance of the gradients of the loss function at the empirical risk minimizer <!-- MATH
+ $\theta_{\text{MAP}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img45.svg"
+ ALT="$\theta_{\text{MAP}}$"></SPAN>.
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.17ex; vertical-align: -3.02ex; " SRC="img49.svg"
+ ALT="$\displaystyle I_{\theta}(\theta_{\text{MAP}}) = \text{Cov}_{(x,y) \sim D} \left...
+...rtial\theta} \mathcal{L}((x,y); \theta)\right\vert_{\theta_{\text{MAP}}}\right)$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\boxed{\Sigma \sim I_{\theta}(\theta_{\text{MAP}})^{-1}}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 4.38ex; vertical-align: -1.49ex; " SRC="img50.svg"
+ ALT="$\displaystyle \boxed{\Sigma \sim I_{\theta}(\theta_{\text{MAP}})^{-1}}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">8</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+
+<H1><A ID="SECTION00050000000000000000">
+<SPAN CLASS="arabic">5</SPAN> Generalized Linear Model for Laplace-BNNs</A>
+</H1>
+
+<P>
+([<A
+ HREF="sampler.html#glm">3</A>]) Define the generalized linear model by linearizing the BNN <!-- MATH
+ $f:X \times \Theta \to Y$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img13.svg"
+ ALT="$f:X \times \Theta \to Y$"></SPAN> at <!-- MATH
+ $\theta = \theta_{\text{MAP}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img51.svg"
+ ALT="$\theta = \theta_{\text{MAP}}$"></SPAN> (via. Taylor series)
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+f_{\text{lin}}(x, \theta) = f(x, \theta_{\text{MAP}}) + \left[\left.\frac{\partial}{\partial\theta} f(x, \theta)\right\vert_{\theta_{\text{MAP}}}\right]  \left(\theta - \theta_{\text{MAP}}\right)
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.17ex; vertical-align: -3.02ex; " SRC="img52.svg"
+ ALT="$\displaystyle f_{\text{lin}}(x, \theta) = f(x, \theta_{\text{MAP}}) + \left[\le...
+...ght\vert_{\theta_{\text{MAP}}}\right] \left(\theta - \theta_{\text{MAP}}\right)$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">9</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+Denote the jacobian matrix  <!-- MATH
+ $\left.\frac{\partial}{\partial\theta} f(x, \theta)\right\vert_{\theta_{\text{MAP}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.43ex; vertical-align: -1.28ex; " SRC="img53.svg"
+ ALT="$\left.\frac{\partial}{\partial\theta} f(x, \theta)\right\vert_{\theta_{\text{MAP}}}$"></SPAN> by <!-- MATH
+ $J(x) \in \mathbb{R}^{d \times w}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img54.svg"
+ ALT="$J(x) \in \mathbb{R}^{d \times w}$"></SPAN>. Replace the posterior distribution <!-- MATH
+ $P(\theta|D)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img25.svg"
+ ALT="$P(\theta \vert D)$"></SPAN> by the Laplace approximation <!-- MATH
+ $\mathcal{N}(\theta_{\text{MAP}}, \Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img55.svg"
+ ALT="$\mathcal{N}(\theta_{\text{MAP}}, \Sigma)$"></SPAN>. The GLM predictive distribution <!-- MATH
+ $P_{\text{lin}}(y|x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img56.svg"
+ ALT="$P_{\text{lin}}(y\vert x)$"></SPAN> on the output space <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img16.svg"
+ ALT="$Y$"></SPAN> is defined to be the push-forward measure of the Laplace posterior <!-- MATH
+ $N(\theta_{\text{MAP}}, \Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img57.svg"
+ ALT="$N(\theta_{\text{MAP}}, \Sigma)$"></SPAN> on the weight space <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img15.svg"
+ ALT="$\Theta$"></SPAN> under the map <!-- MATH
+ $f_{\text{lin}}(x, -): \Theta \to Y$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img58.svg"
+ ALT="$f_{\text{lin}}(x, -): \Theta \to Y$"></SPAN>. Since <!-- MATH
+ $f_{\text{lin}}(x, \theta)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img59.svg"
+ ALT="$f_{\text{lin}}(x, \theta)$"></SPAN> is affine on <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img8.svg"
+ ALT="$\theta$"></SPAN>, the predictive distribution <!-- MATH
+ $P_{\text{lin}}(y|x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img56.svg"
+ ALT="$P_{\text{lin}}(y\vert x)$"></SPAN> is normal.
+
+<P>
+The mean and covariance of the normal distribution <!-- MATH
+ $P_{\text{lin}}(y|x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img56.svg"
+ ALT="$P_{\text{lin}}(y\vert x)$"></SPAN> are as follows
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD class="RIGHT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img60.svg"
+ ALT="$\displaystyle \mathbb{E}_{y \sim P_{\text{lin}}(y\vert x)}[y]$"></SPAN></TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img61.svg"
+ ALT="$\displaystyle = \mathbb{E}_{\theta \sim \mathcal{N}(\theta_{\text{MAP}}, \Sigma)} \left[ f_{\text{lin}}(x, \theta) \right]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img62.svg"
+ ALT="$\displaystyle = f(x, \theta_{\text{MAP}}) + J(x) *\mathbb{E}_{\theta \sim \mathcal{N}(\theta_{\text{MAP}}, \Sigma)}\left[ (\theta - \theta_{\text{MAP}})\right]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img63.svg"
+ ALT="$\displaystyle = f(x, \theta_{\text{MAP}})$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD class="RIGHT"><SPAN CLASS="MATH">cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img64.svg"
+ ALT="$\displaystyle _{y \sim P_{\text{lin}}(y\vert x)}[y]$"></SPAN></TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img66.svg"
+ ALT="$\displaystyle _{\theta \sim \mathcal{N}(\theta_{\text{MAP}}, \Sigma)} \left[ f_{\text{lin}}(x, \theta) \right]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img67.svg"
+ ALT="$\displaystyle _{\theta \sim \mathcal{N}(\theta_{\text{MAP}}, \Sigma)} \left[J(x) * (\theta - \theta_{\text{MAP}})\right]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img68.svg"
+ ALT="$\displaystyle _{\eta \sim \mathcal{N}(0, \Sigma)} \left[J(x) * \eta\right]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.87ex; vertical-align: -0.70ex; " SRC="img69.svg"
+ ALT="$\displaystyle = J(x) *\Sigma*J(x) ^T$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+This property makes GLM suitable for post-hoc predictive estimation as the Bayesian prediction <!-- MATH
+ $\hat{f}_{\text{lin}}(x)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.03ex; vertical-align: -0.70ex; " SRC="img70.svg"
+ ALT="$\hat{f}_{\text{lin}}(x)$"></SPAN> which is simply the mean of the predictive distribution, agrees with the original prediction from the model <!-- MATH
+ $\theta_{\text{MAP}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.19ex; vertical-align: -0.46ex; " SRC="img45.svg"
+ ALT="$\theta_{\text{MAP}}$"></SPAN>. 
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+\hat{f}_{\text{lin}}(x)= f(x, \theta_{\text{MAP}})
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.03ex; vertical-align: -0.70ex; " SRC="img71.svg"
+ ALT="$\displaystyle \hat{f}_{\text{lin}}(x)= f(x, \theta_{\text{MAP}})$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">10</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+The predictive at this point further has a simple analytical formula, 
+<P></P>
+<DIV CLASS="displaymath"><A ID="glm_unc"></A><!-- MATH
+ \begin{equation}
+\boxed{\text{unc}(\hat{f}_{\text{lin}}(x)) = J(x)*\Sigma*J(x)^T}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 4.60ex; vertical-align: -1.49ex; " SRC="img72.svg"
+ ALT="$\displaystyle \boxed{\text{unc}(\hat{f}_{\text{lin}}(x)) = J(x)*\Sigma*J(x)^T}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">11</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+
+<H1><A ID="SECTION00060000000000000000">
+<SPAN CLASS="arabic">6</SPAN> Laplace BNNs with KFAC posterior</A>
+</H1>
+
+<P>
+([<A
+ HREF="sampler.html#kfac">6</A>,<A
+ HREF="sampler.html#kfac-cnn">7</A>]) The FI matrix <!-- MATH
+ $I = I_{\theta}(\theta_{\text{MAP}})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img73.svg"
+ ALT="$I = I_{\theta}(\theta_{\text{MAP}})$"></SPAN> has a very large size <!-- MATH
+ $w \times w$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.77ex; vertical-align: -0.31ex; " SRC="img74.svg"
+ ALT="$w \times w$"></SPAN>. For practical applications various approximations of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img75.svg"
+ ALT="$I$"></SPAN> are available. The KFAC method employs two levels of approximation 
+
+<P>
+
+<OL>
+<LI>Treating each layer on the neural network separately, ignoring cross-layer terms, expressing <!-- MATH
+ $I \in \mathbb{R}^{w \times w}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.17ex; vertical-align: -0.21ex; " SRC="img76.svg"
+ ALT="$I \in \mathbb{R}^{w \times w}$"></SPAN> in block diagonal form with diagonal blocks <!-- MATH
+ $I_{(l)} \in \mathbb{R}^{w_l \times w_l},$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.90ex; vertical-align: -0.94ex; " SRC="img77.svg"
+ ALT="$I_{(l)} \in \mathbb{R}^{w_l \times w_l},$"></SPAN> where <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.58ex; vertical-align: -0.46ex; " SRC="img78.svg"
+ ALT="$w_l$"></SPAN> is the size of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN>-th layer and, <!-- MATH
+ $\sum_{l=1}^L w_l = w$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.20ex; vertical-align: -0.81ex; " SRC="img80.svg"
+ ALT="$\sum_{l=1}^L w_l = w$"></SPAN>. This reduces the size of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img75.svg"
+ ALT="$I$"></SPAN> from <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.12ex; vertical-align: -0.12ex; " SRC="img81.svg"
+ ALT="$w^2$"></SPAN> to <!-- MATH
+ $\sum w_l^2$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.77ex; vertical-align: -0.77ex; " SRC="img82.svg"
+ ALT="$\sum w_l^2$"></SPAN>. 
+</LI>
+<LI>For each layer, the gradients <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.16ex; vertical-align: -0.46ex; " SRC="img83.svg"
+ ALT="$\nabla_l$"></SPAN> in this layer, is expressible as a Kronecker product <!-- MATH
+ $\nabla_l = a_{l-1}\otimes g_l$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.35ex; vertical-align: -0.66ex; " SRC="img84.svg"
+ ALT="$\nabla_l = a_{l-1}\otimes g_l$"></SPAN>, where <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.77ex; vertical-align: -0.66ex; " SRC="img85.svg"
+ ALT="$a_{l-1}$"></SPAN> is the incoming activation from layer <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.03ex; vertical-align: -0.31ex; " SRC="img86.svg"
+ ALT="$l-1$"></SPAN> and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.68ex; vertical-align: -0.57ex; " SRC="img87.svg"
+ ALT="$g_l$"></SPAN> is the otgoing gradient of layer <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN>. The Fisher information block for layer <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN> is then <!-- MATH
+ $I_{(l)} = \mathbb{E}\left[\nabla_l*\nabla_l^T\right] = \mathbb{E} \left[(a_{l-1}\otimes g_l)*(a_{l-1}\otimes g_l)^T\right]$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.02ex; vertical-align: -0.94ex; " SRC="img88.svg"
+ ALT="$I_{(l)} = \mathbb{E}\left[\nabla_l*\nabla_l^T\right] = \mathbb{E} \left[(a_{l-1}\otimes g_l)*(a_{l-1}\otimes g_l)^T\right]$"></SPAN>. The KFAC method makes the approximation <!-- MATH
+ $I_{(l)} \approx \mathbb{E}\left[a_{l-1}\otimes a_{l-1}^T \right] \otimes \mathbb{E}\left[g_l\otimes g_l^T \right]=: Q_{(l)}\otimes H_{(l)}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.05ex; vertical-align: -0.97ex; " SRC="img89.svg"
+ ALT="$I_{(l)} \approx \mathbb{E}\left[a_{l-1}\otimes a_{l-1}^T \right] \otimes \mathbb{E}\left[g_l\otimes g_l^T \right]=: Q_{(l)}\otimes H_{(l)}$"></SPAN>. Here <!-- MATH
+ $Q_{(l)} \in \mathbb{R}^{l_{\text{in}} \times l_{\text{in}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.02ex; vertical-align: -0.94ex; " SRC="img90.svg"
+ ALT="$Q_{(l)} \in \mathbb{R}^{l_{\text{in}} \times l_{\text{in}}}$"></SPAN> and <!-- MATH
+ $H_{(l)} \in \mathbb{R}^{l_{\text{out}} \times l_{\text{out}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.02ex; vertical-align: -0.94ex; " SRC="img91.svg"
+ ALT="$H_{(l)} \in \mathbb{R}^{l_{\text{out}} \times l_{\text{out}}}$"></SPAN> and the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN>-th layer is a map <!-- MATH
+ $\mathbb{R}^{l_{\text{in}}} \to \mathbb{R}^{l_{\text{out}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.20ex; vertical-align: -0.12ex; " SRC="img92.svg"
+ ALT="$\mathbb{R}^{l_{\text{in}}} \to \mathbb{R}^{l_{\text{out}}}$"></SPAN>. This reduces the size from <!-- MATH
+ $\sum w_l^2 = \sum (l_{\text{in}}l_{\text{out}})^2$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.77ex; vertical-align: -0.77ex; " SRC="img93.svg"
+ ALT="$\sum w_l^2 = \sum (l_{\text{in}}l_{\text{out}})^2$"></SPAN> to <!-- MATH
+ $\sum (l_{\text{in}}^2 + l_{\text{out}}^2)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.74ex; vertical-align: -0.74ex; " SRC="img94.svg"
+ ALT="$\sum (l_{\text{in}}^2 + l_{\text{out}}^2)$"></SPAN>.
+</LI>
+<LI>The kronecker factored block-diagonal form <!-- MATH
+ $I_{\text{KFAC}} = \text{diag} \left [Q_{(1)}\otimes H_{(1)}, \cdots, Q_{(L)} \otimes H_{(L)} \right]$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.02ex; vertical-align: -0.94ex; " SRC="img95.svg"
+ ALT="$I_{\text{KFAC}} = \text{diag} \left [Q_{(1)}\otimes H_{(1)}, \cdots, Q_{(L)} \otimes H_{(L)} \right]$"></SPAN>.
+</LI>
+<LI>The KFAC posterior covariance, <!-- MATH
+ $\Sigma_{\text{KFAC}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.16ex; vertical-align: -0.46ex; " SRC="img96.svg"
+ ALT="$\Sigma_{\text{KFAC}}$"></SPAN> has the form
+<P></P>
+<DIV CLASS="displaymath"><A ID="sigma_kfac"></A><!-- MATH
+ \begin{equation}
+\begin{pmatrix}
+Q_{(1)}^{-1}\otimes H_{(1)}^{-1}&  &\\
+& \ddots & \\
+&& Q_{(L)}^{-1} \otimes H_{(L)}^{-1}
+\end{pmatrix}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 11.00ex; vertical-align: -4.94ex; " SRC="img97.svg"
+ ALT="$\displaystyle \begin{pmatrix}
+Q_{(1)}^{-1}\otimes H_{(1)}^{-1}&amp; &amp;\\
+&amp; \ddots &amp; \\
+&amp;&amp; Q_{(L)}^{-1} \otimes H_{(L)}^{-1}
+\end{pmatrix}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">12</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+</LI>
+</OL>
+
+<P>
+
+<H1><A ID="SECTION00070000000000000000">
+<SPAN CLASS="arabic">7</SPAN> The GLM predictive for Laplace-KFAC posterior</A>
+</H1>
+
+<P>
+In order to use this during inference one needs access two matrices,  
+
+<P>
+
+<UL>
+<LI>the covariance matrix <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img5.svg"
+ ALT="$\Sigma$"></SPAN> or the inverse of the Fisher information matrix <!-- MATH
+ $I_{\theta}(\theta_{\text{MAP}})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img98.svg"
+ ALT="$I_{\theta}(\theta_{\text{MAP}})$"></SPAN> which  is computed only once offline and used repeatedly during inference (independent of the input <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>)
+</LI>
+<LI>the jacobian <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN>, which must be computed for every input <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img1.svg"
+ ALT="$x$"></SPAN>. 
+</LI>
+</UL>
+
+<P>
+Using the given co-ordinatization <!-- MATH
+ $\theta_1, \ldots, \theta_w$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img99.svg"
+ ALT="$\theta_1, \ldots, \theta_w$"></SPAN> of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img15.svg"
+ ALT="$\Theta$"></SPAN>, the entries of the jacobian matrix <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> are (<A HREF="#matrix">13</A>), where <!-- MATH
+ $\frac{\partial f_i}{\partial \theta_j}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.64ex; vertical-align: -1.38ex; " SRC="img100.svg"
+ ALT="$\frac{\partial f_i}{\partial \theta_j}$"></SPAN> is short for <!-- MATH
+ $\left.\frac{\partial}{\partial\theta_j}f_i(x, \theta) \right\vert_{\theta = \theta_{\text{MAP}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 4.74ex; vertical-align: -1.97ex; " SRC="img101.svg"
+ ALT="$\left.\frac{\partial}{\partial\theta_j}f_i(x, \theta) \right\vert_{\theta = \theta_{\text{MAP}}}$"></SPAN>, and <!-- MATH
+ $(f_1, \ldots, f_d)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img102.svg"
+ ALT="$(f_1, \ldots, f_d)$"></SPAN> are the scalar components of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img21.svg"
+ ALT="$f$"></SPAN>.  The rows are the gradients of the scalar valued functions <!-- MATH
+ $f_i, 1\leq i \leq d$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img103.svg"
+ ALT="$f_i, 1\leq i \leq d$"></SPAN>.
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><A ID="matrix"></A><!-- MATH
+ \begin{equation}
+J(x) =
+\begin{pmatrix}
+- & \left[\nabla f_1\right ]^T & - \\
+ & \vdots &  \\
+- & \left[ \nabla f_d \right]^T &  -
+\end{pmatrix}
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 10.76ex; vertical-align: -4.82ex; " SRC="img104.svg"
+ ALT="$\displaystyle J(x) =
+\begin{pmatrix}
+- &amp; \left[\nabla f_1\right ]^T &amp; - \\
+&amp; \vdots &amp; \\
+- &amp; \left[ \nabla f_d \right]^T &amp; -
+\end{pmatrix}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">13</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+During inference time these rows can be computed using back-propagation. This would require <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img105.svg"
+ ALT="$d$"></SPAN> back-propagation steps, one for each scalar value of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.29ex; vertical-align: -0.57ex; " SRC="img21.svg"
+ ALT="$f$"></SPAN>. 
+
+<P>
+When the covariance is expressed in Kronecker factored form the GLM uncertianty expression must be 
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><A ID="glm_unc_kfac"></A><!-- MATH
+ \begin{equation}
+\text{unc}(\hat{f}_{\text{lin}}(x)) = J(x)_{\text{KF}}*\Sigma_{\text{KFAC}}*J(x)_{\text{KF}}^T
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH">unc<IMG
+ STYLE="height: 3.03ex; vertical-align: -0.70ex; " SRC="img106.svg"
+ ALT="$\displaystyle (\hat{f}_{\text{lin}}(x)) = J(x)_{\text{KF}}*\Sigma_{\text{KFAC}}*J(x)_{\text{KF}}^T$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">14</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+where <!-- MATH
+ $J(x)_{\text{KF}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img107.svg"
+ ALT="$J(x)_{\text{KF}}$"></SPAN> is the jacobian in a kronecker-factored form.
+
+<P>
+When <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img108.svg"
+ ALT="$d=1$"></SPAN>, i.e. <!-- MATH
+ $f(x, \theta) \to \mathbb{R}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img109.svg"
+ ALT="$f(x, \theta) \to \mathbb{R}$"></SPAN> is scalar valued, consider the jacobian <!-- MATH
+ $\left.\frac{\partial}{\partial\theta} f(x,\theta)\right\vert_{\theta_{\text{MAP}}} \in \mathbb{R}^{1\times w}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.43ex; vertical-align: -1.28ex; " SRC="img110.svg"
+ ALT="$\left.\frac{\partial}{\partial\theta} f(x,\theta)\right\vert_{\theta_{\text{MAP}}} \in \mathbb{R}^{1\times w}$"></SPAN>. For every layer <!-- MATH
+ $l \in [1,\cdots, L]$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img111.svg"
+ ALT="$l \in [1,\cdots, L]$"></SPAN>, the layerwise derivative has a kronecker decomposition <!-- MATH
+ $\left.\frac{\partial}{\partial\theta_l} f(x,\theta)\right\vert_{\theta_{\text{MAP}}} = a_{l-1}\otimes g_l$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 4.74ex; vertical-align: -1.97ex; " SRC="img112.svg"
+ ALT="$\left.\frac{\partial}{\partial\theta_l} f(x,\theta)\right\vert_{\theta_{\text{MAP}}} = a_{l-1}\otimes g_l$"></SPAN>, where <!-- MATH
+ $a_{l-1} \in \mathbb{R}^{1\times l_{\text{in}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.74ex; vertical-align: -0.66ex; " SRC="img113.svg"
+ ALT="$a_{l-1} \in \mathbb{R}^{1\times l_{\text{in}}}$"></SPAN> is the incoming activation and <!-- MATH
+ $g_l \in \mathbb{R}^{1 \times l_{\text{out}}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.65ex; vertical-align: -0.57ex; " SRC="img114.svg"
+ ALT="$g_l \in \mathbb{R}^{1 \times l_{\text{out}}}$"></SPAN> the outgoing gradient for layer <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN>. This gives a decomposition of the jacobian into blocks.
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD class="RIGHT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img115.svg"
+ ALT="$\displaystyle J(x)$"></SPAN></TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.17ex; vertical-align: -3.02ex; " SRC="img116.svg"
+ ALT="$\displaystyle = \left( \left.\frac{\partial}{\partial\theta_1} f(x,\theta)\righ...
+...partial}{\partial\theta_L} f(x,\theta)\right\vert_{\theta_{\text{MAP}}} \right)$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.49ex; vertical-align: -0.21ex; " SRC="img117.svg"
+ ALT="$\displaystyle \in \mathbb{R}^{d\times (w_1 + \cdots + w_L)}$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 8.84ex; vertical-align: -3.86ex; " SRC="img118.svg"
+ ALT="$\displaystyle =
+\begin{pmatrix}
+\vert &amp;&amp; \vert \\
+a_0^j\otimes g_1^j &amp; \cdots &amp;a_{L-1}^j\otimes g_L^j \\
+\vert &amp;&amp; \vert
+\end{pmatrix}$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+where the superscript <!-- MATH
+ $j \in (1, \cdots, d)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img119.svg"
+ ALT="$j \in (1, \cdots, d)$"></SPAN>. Finally the GLM-predictive calculation,
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation*}
+J(x)
+*
+\begin{pmatrix}
+Q_{(1)}^{-1}\otimes H_{(1)}^{-1}&& \\
+& \ddots & \\
+&& Q_{(L)}^{-1} \otimes H_{(L)}^{-1}
+\end{pmatrix}
+*
+J(x)^T
+\end{equation*}
+ -->
+<TABLE CLASS="equation*" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 11.00ex; vertical-align: -4.94ex; " SRC="img120.svg"
+ ALT="$\displaystyle J(x)
+*
+\begin{pmatrix}
+Q_{(1)}^{-1}\otimes H_{(1)}^{-1}&amp;&amp; \\
+&amp; \ddots &amp; \\
+&amp;&amp; Q_{(L)}^{-1} \otimes H_{(L)}^{-1}
+\end{pmatrix}*
+J(x)^T$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+<P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation}
+=\text{Diag}_{j=1}^d\left[\sum_{l=1}^L \left( a_{l-1}^j*Q_{(l)}^{-1}*{a_{l-1}^j}^T \right) \otimes \left( g_l^j * H_{(l)}^{-1} * {g_{l-1}^j}^T\right)\right]
+\end{equation}
+ -->
+<TABLE CLASS="equation" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">Diag<IMG
+ STYLE="height: 7.48ex; vertical-align: -3.14ex; " SRC="img121.svg"
+ ALT="$\displaystyle _{j=1}^d\left[\sum_{l=1}^L \left( a_{l-1}^j*Q_{(l)}^{-1}*{a_{l-1}^j}^T \right) \otimes \left( g_l^j * H_{(l)}^{-1} * {g_{l-1}^j}^T\right)\right]$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+(<SPAN CLASS="arabic">15</SPAN>)</TD></TR>
+</TABLE></DIV>
+<P></P>
+
+<P>
+
+<H1><A ID="SECTION00080000000000000000">
+<SPAN CLASS="arabic">8</SPAN> MC-GLM: monte-carlo estimation of the GLM predictive</A>
+</H1>
+
+<P>
+The GLM uncterianty term <A HREF="#glm_unc">11</A> can be estimated by computing sample covariance,
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD class="RIGHT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.87ex; vertical-align: -0.70ex; " SRC="img122.svg"
+ ALT="$\displaystyle J(x)*\Sigma * J(x)^T$"></SPAN></TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">&nbsp; &nbsp;cov<IMG
+ STYLE="height: 2.79ex; vertical-align: -0.94ex; " SRC="img123.svg"
+ ALT="$\displaystyle _{\eta \in \mathcal{N}(0, \Sigma)}\left[ J(x) * \eta \right ]$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 7.42ex; vertical-align: -3.09ex; " SRC="img124.svg"
+ ALT="$\displaystyle \approx \frac{1}{N-1} \sum_{i=1}^N \left[J(x)*\eta_i \right] \left[J(x)*\eta_i \right]^T$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+where <!-- MATH
+ $\left( \eta_1, \cdots, \eta_n \right) \sim \mathcal{N}(0,\Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img125.svg"
+ ALT="$\left( \eta_1, \cdots, \eta_n \right) \sim \mathcal{N}(0,\Sigma)$"></SPAN> are i.i.d samples. The noise vectors <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.68ex; vertical-align: -0.57ex; " SRC="img126.svg"
+ ALT="$\eta$"></SPAN> can be interpreted as members of the tangent space <!-- MATH
+ $T_{\theta_{\text{MAP}}}(\Theta)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img127.svg"
+ ALT="$T_{\theta_{\text{MAP}}}(\Theta)$"></SPAN>, and the terms in the summand, <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img128.svg"
+ ALT="$J(x)*\eta$"></SPAN> are simply the directional derivatives <!-- MATH
+ $D_{\vec{\eta}} f = \lim_{h \to 0} \left(f(\theta_{\text{MAP}} + h\vec{\eta}) - f(\theta_{\text{MAP}})\right)/h$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.65ex; vertical-align: -0.80ex; " SRC="img129.svg"
+ ALT="$D_{\vec{\eta}} f = \lim_{h \to 0} \left(f(\theta_{\text{MAP}} + h\vec{\eta}) - f(\theta_{\text{MAP}})\right)/h$"></SPAN>.
+
+<P>
+The MC-GLM method to estimate predictive is the following:
+
+<P>
+
+<OL>
+<LI>Sample <!-- MATH
+ $(\vec{\eta}_1, \ldots, \vec{\eta}_k) \sim \mathcal{N}(0, \Sigma)^{\times k}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img130.svg"
+ ALT="$(\vec{\eta}_1, \ldots, \vec{\eta}_k) \sim \mathcal{N}(0, \Sigma)^{\times k}$"></SPAN>, <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.93ex; vertical-align: -0.21ex; " SRC="img131.svg"
+ ALT="$k \ll w$"></SPAN>. Define,
+</LI>
+<LI><P></P>
+<DIV CLASS="displaymath"><!-- MATH
+ \begin{equation*}
+\overline{A}(x) :=
+\begin{pmatrix}
+| & & | \\
+\bar{D}_{\vec{\eta}_1}f & \cdots & \bar{D}_{\vec{\eta}_k}f \\
+| &  & |
+\end{pmatrix}
+\in \mathbb{R}^{d \times k}
+\end{equation*}
+ -->
+<TABLE CLASS="equation*" >
+<TR>
+<TD  style="text-align:center;"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 8.56ex; vertical-align: -3.72ex; " SRC="img132.svg"
+ ALT="$\displaystyle \overline{A}(x) :=
+\begin{pmatrix}
+\vert &amp; &amp; \vert \\
+\bar{D}_{\...
+...D}_{\vec{\eta}_k}f \\
+\vert &amp; &amp; \vert
+\end{pmatrix}\in \mathbb{R}^{d \times k}$"></SPAN></TD>
+<TD  CLASS="eqno" style="text-align:right">
+&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+</LI>
+<LI>The approximate directional derivative <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.13ex; vertical-align: -0.12ex; " SRC="img133.svg"
+ ALT="$\bar{D}$"></SPAN> is calculated using finite differences.
+</LI>
+<LI><!-- MATH
+ $\text{mcglm-unc}(f(x, \theta_{\text{MAP}})):= \overline{A}(x)*\overline{A}(x)^T$
+ -->
+<SPAN CLASS="MATH">mcglm-unc<IMG
+ STYLE="height: 2.85ex; vertical-align: -0.70ex; " SRC="img134.svg"
+ ALT="$(f(x, \theta_{\text{MAP}})):= \overline{A}(x)*\overline{A}(x)^T$"></SPAN>
+</LI>
+</OL>
+
+<P>
+The Cholesky decomposition <!-- MATH
+ $\Sigma = B*B^T$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.18ex; vertical-align: -0.12ex; " SRC="img135.svg"
+ ALT="$\Sigma = B*B^T$"></SPAN> lets us write the predictive <!-- MATH
+ $J(x)*\Sigma*J(x)^T$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.76ex; vertical-align: -0.70ex; " SRC="img136.svg"
+ ALT="$J(x)*\Sigma*J(x)^T$"></SPAN> as <!-- MATH
+ $A(x)*A(x)^T$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.76ex; vertical-align: -0.70ex; " SRC="img137.svg"
+ ALT="$A(x)*A(x)^T$"></SPAN>, where <!-- MATH
+ $A(x) = J(x)*B$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img138.svg"
+ ALT="$A(x) = J(x)*B$"></SPAN>. The matrix <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img10.svg"
+ ALT="$A(x)$"></SPAN> is simply the jacobian <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> base-changed to the a new basis formed out of the columns of <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img139.svg"
+ ALT="$B$"></SPAN>. 
+From this point of view the idea of MC-GLM is to base-change <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img6.svg"
+ ALT="$J(x)$"></SPAN> using a different and low-rank basis for <!-- MATH
+ $T_{\theta_{\text{MAP}}}(W)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img140.svg"
+ ALT="$T_{\theta_{\text{MAP}}}(W)$"></SPAN>, obtained by sampling. 
+
+<P>
+
+<H1><A ID="SECTION00090000000000000000">
+<SPAN CLASS="arabic">9</SPAN> Sampling from the KFAC posterior</A>
+</H1>
+
+<P>
+In order to generate a sample from a <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.23ex; vertical-align: -0.12ex; " SRC="img141.svg"
+ ALT="$n$"></SPAN>-variable normal <!-- MATH
+ $\vec{z} \sim \mathcal{N}(\vec{\mu}, \Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img142.svg"
+ ALT="$\vec{z} \sim \mathcal{N}(\vec{\mu}, \Sigma)$"></SPAN> one has to write it as <!-- MATH
+ $\vec{z} = \vec{\mu} + B\vec{x}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.34ex; vertical-align: -0.57ex; " SRC="img143.svg"
+ ALT="$\vec{z} = \vec{\mu} + B\vec{x}$"></SPAN>, where <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img139.svg"
+ ALT="$B$"></SPAN> is a <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.77ex; vertical-align: -0.31ex; " SRC="img144.svg"
+ ALT="$n\times n$"></SPAN> matrix such that <!-- MATH
+ $BB^T = \Sigma$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.18ex; vertical-align: -0.12ex; " SRC="img145.svg"
+ ALT="$BB^T = \Sigma$"></SPAN> and <!-- MATH
+ $\vec{x} \sim \mathcal{N}(\vec{0}, I_n)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.96ex; vertical-align: -0.70ex; " SRC="img146.svg"
+ ALT="$\vec{x} \sim \mathcal{N}(\vec{0}, I_n)$"></SPAN>. The matrix <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img139.svg"
+ ALT="$B$"></SPAN> can be found using Cholesky decomposition and is guaranteed when <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img5.svg"
+ ALT="$\Sigma$"></SPAN> is a covariance. (Notation: <!-- MATH
+ $B = \text{ch}(\Sigma)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.12ex; " SRC="img147.svg"
+ ALT="$B =$">&nbsp; &nbsp;ch<IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img148.svg"
+ ALT="$(\Sigma)$"></SPAN>.)
+
+<P>
+When the covariance is in KFAC form as in <A HREF="#sigma_kfac">12</A>, we observe that the cholesky decomposition commutes with block-diagonal, inverse and kronecker product. Consequenty the Cholesky is computed as a block diagonal matrix with the blocks <!-- MATH
+ $\text{ch}(Q_{(l)})^{-1}\otimes \text{ch}(H_{(l)})^{-1}$
+ -->
+<SPAN CLASS="MATH">ch<IMG
+ STYLE="height: 2.94ex; vertical-align: -0.94ex; " SRC="img149.svg"
+ ALT="$(Q_{(l)})^{-1}\otimes$">&nbsp; &nbsp;ch<IMG
+ STYLE="height: 2.94ex; vertical-align: -0.94ex; " SRC="img150.svg"
+ ALT="$(H_{(l)})^{-1}$"></SPAN> along the diagonal. 
+For every layer <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.84ex; vertical-align: -0.12ex; " SRC="img79.svg"
+ ALT="$l$"></SPAN>, let <!-- MATH
+ $\mathcal{N}(\vec{\mu}_l, Q_{(l)}^{-1}\otimes H_{(l)}^{-1})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.46ex; vertical-align: -1.31ex; " SRC="img151.svg"
+ ALT="$\mathcal{N}(\vec{\mu}_l, Q_{(l)}^{-1}\otimes H_{(l)}^{-1})$"></SPAN> be the restriction of <!-- MATH
+ $\mathcal{N}(\vec{\mu}, \Sigma_{\text{KFAC}})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.55ex; vertical-align: -0.70ex; " SRC="img152.svg"
+ ALT="$\mathcal{N}(\vec{\mu}, \Sigma_{\text{KFAC}})$"></SPAN> restricted to weights of <!-- MATH
+ $f_{\theta_l}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.43ex; vertical-align: -0.71ex; " SRC="img153.svg"
+ ALT="$f_{\theta_l}$"></SPAN>.The layer-wise sample obtained as 
+<P></P>
+<DIV CLASS="displaymath"><TABLE CLASS="equation" >
+<TR >
+<TD class="lfill"></TD>
+<TD class="RIGHT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.23ex; vertical-align: -0.46ex; " SRC="img154.svg"
+ ALT="$\displaystyle \vec{z}_l$"></SPAN></TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.05ex; vertical-align: -0.94ex; " SRC="img155.svg"
+ ALT="$\displaystyle = \left( \text{ch}(Q_{(l)})^{-1}\otimes \text{ch}(H_{(l)})^{-1}\right )* \vec{x}_l$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR >
+<TD class="lfill"></TD>
+<TD>&nbsp;</TD>
+<TD class="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.08ex; vertical-align: -0.12ex; " SRC="img65.svg"
+ ALT="$\displaystyle =$">&nbsp; &nbsp;ch<IMG
+ STYLE="height: 3.05ex; vertical-align: -0.94ex; " SRC="img156.svg"
+ ALT="$\displaystyle (Q_{(l)})^{-1}*\vec{x}_l$">.reshape<IMG
+ STYLE="height: 3.05ex; vertical-align: -0.94ex; " SRC="img157.svg"
+ ALT="$\displaystyle (l_{\text{in}}, l_{\text{out}})*\text{ch}(H_{(l)})^{-1}$"></SPAN></TD>
+<TD  class="rfill">&nbsp;&nbsp;&nbsp;</TD></TR>
+</TABLE></DIV>
+<P></P>
+where  <!-- MATH
+ $\vec{x}_l \sim \mathcal{N}(\vec{\mu_l}, I_{w_l})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.56ex; vertical-align: -0.71ex; " SRC="img158.svg"
+ ALT="$\vec{x}_l \sim \mathcal{N}(\vec{\mu_l}, I_{w_l})$"></SPAN>.
+
+<P>
+ 
+<H2><A ID="SECTION000100000000000000000">
+References</A>
+</H2><DL class="COMPACT">
+<DT><A ID="gal2016dropout">1</A>
+<DD> 
+Y. Gal. Zoubin Ghahramani;
+<SPAN  CLASS="textit">Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning</SPAN>. 
+Proceedings of The 33rd International Conference on Machine Learning, PMLR 48:1050-1059, 2016. 
+
+<P>
+<DT><A ID="gal2015bayesian">2</A>
+<DD> 
+Y. Gal 
+<SPAN  CLASS="textit">Uncertainty in Deep Learning. PhD thesis</SPAN>, University of Cambridge, 2016.
+
+<P>
+<DT><A ID="glm">3</A>
+<DD>
+Immer, Korzepa, Bauer
+<SPAN  CLASS="textit">Improving predictions of bayesian neural nets via local linearization</SPAN>, 
+Proceedings of the 24th international conference on Artificial Intelligence and Statistics (AISTATS) 2021, PLMR: Volume 130, 2021. 
+
+<P>
+<DT><A ID="sinf">4</A>
+<DD>
+Lee, Humt,
+<SPAN  CLASS="textit">Estimating Model Uncertainty of Neural Networks in Sparse Information Form</SPAN>, ICML, 2020.
+
+<P>
+<DT><A ID="mackay">5</A>
+<DD>
+Mackay
+<SPAN  CLASS="textit">Bayesian model comparison and backprop-nets</SPAN>, NeurIPS, 1992. 
+
+<P>
+<DT><A ID="kfac">6</A>
+<DD>
+Martens, G. 
+<SPAN  CLASS="textit">Optimizing neural networks with kronecker-factored approximate curvature</SPAN>, Proceedings of the 32nd ICML, 2015.
+
+<P>
+<DT><A ID="kfac-cnn">7</A>
+<DD>
+Martens, G. 
+<SPAN  CLASS="textit">A Kronecker-factored approximate Fisher matrix for convolutional layers</SPAN>, International Conference on Machine Learning, 2016
+
+<P>
+</DL>
+
+<P>
+
+<H1><A ID="SECTION000110000000000000000">
+About this document ...</A>
+</H1>
+ <STRONG>An Estimator for the GLM predictive of a Kronecker-factored Laplace Bayesian Neural Network</STRONG><P>
+This document was generated using the
+<A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2024 (Released January 1, 2024)
+
+
+</BODY>
+</HTML>
