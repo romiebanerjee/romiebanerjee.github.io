@@ -20,9 +20,7 @@ Welcome to my personal GitHub Pages website!
 **Topology of neural networks**: Topological data analysis of convolution kernels, replicating work of Carlsson et.al. on Topological Deep Learning. *Methods: persistent homology, Mapper, CNN*
 
 **Formal methods for verifying neural networks**: Robustness verification of neural networks using static analysis methods from abstract Interpretation. Replicating *$AI^2$ AbstInt for AI* paper. *Methods: Abstract Interpretation* 
-<!-- 
-**[LLMOPs: Building, Tracking, and Deploying a RAG Pipeline]()**
-- An end-to-end LLMOps workflow for a Retrieval-Augmented Generation (RAG) system, Using **LangChain** for pipeline orchestration, **Weights & Biases (WandB)** for experiment tracking, and **MLflow** for model management -->
+
 
 
 
