@@ -7,13 +7,13 @@ Welcome to my personal GitHub Pages website!
 
 
 **Laplace-BNN**: A tutorial on inference and predictive estimation algorithms for Laplace approximation based Bayesian neural networks. *Methods: Laplace approximation, KFAC, Monte-Carlo Integration, GLM-predictive*
-[Colab]()
+[Colab Notebook]()
 
 **Measuring Superposition**: An exploratory analysis of sparse autoencoder features for GPT-2 small. *Methods: SAE, TransformerLens*
-[Colab]()
+[Colab Notebook]()
 
 **Transformer Circuit Analysis**: A sampler for reverse-engineered attention heads in GPT-2-small to explain *Induction Heads*, replicating Anthropic’s findings. *Methods: Activation patching, attention visualization (TransformerLens)* 
-[Colab]()
+[Colab Notebook]()
 
 **Topological Invariants for CNNs**: Code for a persistent-homology guided CNNs to detect topological irregularities, with applications to improve performance on difficult/edge-case driving sensor input data. *Methods: Persistent homology, CNN, segmentation*
 
