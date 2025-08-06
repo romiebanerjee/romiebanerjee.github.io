@@ -6,7 +6,7 @@ Welcome to my personal GitHub Pages website!
 ## Projects
 
 
-**Laplace-BNN**: A tutorial on inference and predictive estimation algorithms for Laplace approximation based Bayesian neural networks. *Methods: Laplace approximation, KFAC, Monte-Carlo Integration, GLM-predictive*
+[**Laplace-BNN**](https://github.com/romiebanerjee/laplace/blob/master/tutorial.ipynb): A tutorial on inference and predictive estimation algorithms for Laplace approximation based Bayesian neural networks. *Methods: Laplace approximation, KFAC, Monte-Carlo Integration, GLM-predictive*
 [Colab Notebook](https://drive.google.com/file/d/1EvHZd3a8t9Gbj5gFonLxduKdbXEZ9ud3/view?usp=sharing)
 
 **Measuring Superposition**: An exploratory analysis of sparse autoencoder features for GPT-2 small. *Methods: SAE, TransformerLens*
