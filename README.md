@@ -7,8 +7,7 @@ Welcome to my personal GitHub Pages website!
 ## 🔍 Projects
 ### Bayesian Inference
 - **Laplace-BNN**: Inference algorithms with Laplace approximation based Bayesian neural networks - with KFAC posterior and GLM predictive. 
-  - [Colab Notebook 1](https://github.com/romiebanerjee/laplace/blob/master/tutorial.ipynb)
-  - [Colab Notebook 2](https://github.com/romiebanerjee/laplace/blob/master/segmentation_uncertainty.ipynb)
+  - [Colab Notebook 1](https://github.com/romiebanerjee/laplace/blob/master/tutorial.ipynb), [Colab Notebook 2](https://github.com/romiebanerjee/laplace/blob/master/segmentation_uncertainty.ipynb)
 
 ### MechInterp 
 - **Measuring Superposition**: An exploratory analysis of sparse autoencoder features for GPT-2 small. *Methods: SAE, TransformerLens*
