@@ -2,8 +2,9 @@
 
 Welcome to my personal GitHub Pages website!
 
+<hr>
 
-## Projects
+## 🔍 Projects
 ### Bayesian Inference
 - **Laplace-BNN**: Inference algorithms with Laplace approximation based Bayesian neural networks - with KFAC posterior and GLM predictive. 
   - [Colab Notebook 1](https://github.com/romiebanerjee/laplace/blob/master/tutorial.ipynb)
@@ -25,5 +26,23 @@ Welcome to my personal GitHub Pages website!
 - **Formal methods for verifying neural networks**: Robustness verification of neural networks using static analysis methods from abstract Interpretation. Replicating *$AI^2$ AbstInt for AI* paper. *Methods: Abstract Interpretation* 
 
 
+<hr>
+
+## 📜 <u>Publications/Technical Writings (ML & math)</u>
+*An estimator for the GLM predictive of a Kronecker-factored Laplace Bayesian neural network, (preprint)* [[html]](https://romiebanerjee.github.io/sampler/index.html) [[pdf]](https://drive.google.com/file/d/1LbI-9JJT1i_QkP5bJurecxCFS4HqJ2gC/view?usp=drive_link)
+
+*Scaling AbstInt for AI to large vision models using ellipsoid abstract domains, (preprint)* 
+
+*CNNs with topological inductive priors generalize better, (preprint)* 
+
+*Towards Robust Perception Using Topological Invariants. AISafety@IJCAI 2021* [https://ceur-ws.org/Vol-2916/](https://ceur-ws.org/Vol-2916/)
+
+*Tannakization of quasi-categories and monadic descent, ArXiv preprint* [https://arxiv.org/abs/1608.01148](https://arxiv.org/abs/1608.01148)
+
+*Galois Descent for Real Spectra. Journal of Homotopy and related Structures* [https://link.springer.com/article/10.1007/s40062-016-0127-1](https://link.springer.com/article/10.1007/s40062-016-0127-1)
+
+*A modular description of ER(2), New York Journal of Mathematics* [https://nyjm.albany.edu/j/2014/20-37.html](https://nyjm.albany.edu/j/2014/20-37.html)
+
+*One the ER(2) cohomology of some odd-dimensional projective spaces, Elsevier* [https://www.sciencedirect.com/](https://www.sciencedirect.com/science/article/pii/S0166864113002058)
 
 
