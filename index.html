@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Romie Banerjee Publications</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +32,7 @@
     --rule: #2a343b; --accent: #7cc0d8; --accent-soft: #1d2f37; color-scheme: dark;
   }
   body {
+    margin: 0;
     background: var(--bg); color: var(--fg);
     font-family: var(--font-body); font-size: 16px; line-height: 1.6;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -71,7 +77,8 @@
     .entry { grid-template-columns: 1fr; gap: 2px; }
   }
 </style>
-
+</head>
+<body>
 <main class="page">
   <header>
     <h1>Romie Banerjee</h1>
@@ -90,42 +97,33 @@
 
   <section id="ait" aria-labelledby="ait-h">
     <h2 id="ait-h">Algorithmic information theory</h2>
-    <p class="note">Computational Algorithmic Statistics (CAS): a series on which models explain data, at what description cost, and how to search for them.</p>
+    <p class="note">Which models explain data, at what description cost, and how to search for strong models.</p>
     <ol>
       <li class="entry">
         <span class="year">2026</span>
         <div class="body">
-          <p class="title">CAS III: Searching for Orbit Models. Value Estimation on Subgroup Lattices</p>
-          <p class="venue">R. Banerjee · Preprint, October 2026</p>
-          <p class="desc">Recasts the search for strong models as a single-player game on subgroup lattices, with rewards in bits saved. Shows that without a hypothesis cost the optimum collapses to a model that names the data, derives a Bellman recursion with computable value bounds, and gives an AlphaZero-style Monte Carlo lattice search.</p>
-          <div class="links"><a href="https://romiebanerjee.github.io/CAS3/index.html">HTML</a></div>
+          <span class="status">Draft</span>
+          <p class="title">Typed Partition Programs: GRPO Search for Strong Models</p>
+          <p class="venue">R. Banerjee · Draft</p>
+          <p class="desc">Drops the symmetry restriction and searches all partitions written as typed, total programs, targeting Kolmogorov's strong structure function directly. A verifier compiles each program to a Boolean circuit and certifies its codelength by model counting (BDDs, d-DNNF, ApproxMC) with a decoding check, a data-blind grammar code prices hypotheses, and a language model proposes programs, first in an evolutionary loop and then trained with GRPO. Available on request.</p>
         </div>
       </li>
       <li class="entry">
         <span class="year">2026</span>
         <div class="body">
-          <p class="title"><a href="https://arxiv.org/abs/2609.40290">CAS II: Orbits as Models. Kolmogorov's Structure Function under Symmetry</a></p>
-          <p class="venue">R. Banerjee · arXiv:2609.40290</p>
-          <p class="desc">Develops algorithmic statistics over orbit partitions of groups acting on strings, using the Galois connection between subgroups and partitions. Proves a band theorem for linear symmetry, gives Burnside-ring coordinates on permutation groups, and shows that any hypothesis space small enough to search misses some simple structure.</p>
-          <div class="links"><a href="https://arxiv.org/abs/2609.40290">arXiv</a><a href="https://romiebanerjee.github.io/CAS2/index.html">HTML</a></div>
+          <p class="title"><a href="https://arxiv.org/abs/2609.40290">Orbits as Strong Models: Kolmogorov Structure Function under Symmetry</a></p>
+          <p class="venue">R. Banerjee · Preprint, November 2026 · arXiv:2609.40290</p>
+          <p class="desc">Develops algorithmic statistics over symmetric partitions, the orbit partitions of groups acting on strings, using the Galois connection between subgroups and partitions. For linear symmetry it proves a band theorem and finds stochastic normal strings whose simple structure is invisible to it; it coordinatises permutation groups by type and placement and shows that any space of symmetry hypotheses small enough to search misses simple structure. It then sets up the search for orbit models as reinforcement learning on subgroup lattices: without a cost for the hypothesis the problem collapses onto the stabiliser of the data, and with the cost included model search is value estimation, solved with Monte Carlo methods and a lattice version of Monte Carlo tree search.</p>
+          <div class="links"><a href="https://arxiv.org/abs/2609.40290">arXiv</a><a href="https://romiebanerjee.github.io/CAS2/index.html">Interactive edition</a><a href="https://github.com/romiebanerjee/CAS3">Code</a></div>
         </div>
       </li>
       <li class="entry">
         <span class="year">2026</span>
         <div class="body">
-          <p class="title"><a href="https://arxiv.org/abs/2607.13796">CAS I: A Geometric Coding Theorem</a></p>
+          <p class="title"><a href="https://arxiv.org/abs/2607.13796">A Geometric Coding Theorem</a></p>
           <p class="venue">R. Banerjee · arXiv:2607.13796</p>
           <p class="desc">Defines the symmetry prior, the probability that a random computable symmetry has a string as its unique fixed point, and proves a coding theorem for it: −log m<sub>G</sub>(x) = K(x) + O(1) for fix-retractable groups.</p>
           <div class="links"><a href="https://arxiv.org/abs/2607.13796">arXiv</a></div>
-        </div>
-      </li>
-      <li class="entry">
-        <span class="year">2026</span>
-        <div class="body">
-          <span class="status">In preparation</span>
-          <p class="title">Typed Partition Programs: GRPO Search for Strong Models</p>
-          <p class="venue">R. Banerjee · Design note</p>
-          <p class="desc">Extends the search from symmetric to arbitrary partitions written as typed, total programs. A verifier certifies each codelength by model counting, a data-blind grammar code prices hypotheses, and a language model proposes programs, trained with GRPO. Available on request.</p>
         </div>
       </li>
     </ol>
@@ -154,7 +152,7 @@
         <span class="year">2021</span>
         <div class="body">
           <p class="title"><a href="https://ceur-ws.org/Vol-2916/">Towards Robust Perception Using Topological Invariants</a></p>
-          <p class="venue">R. Banerjee, Feng Liu, Pei Ke · <em>AISafety Workshop at IJCAI 2021</em>, CEUR-WS Vol. 2916</p>
+          <p class="venue">R. Banerjee, L. Van Gool, D. Dai · <em>AISafety Workshop at IJCAI 2021</em>, CEUR-WS Vol. 2916</p>
           <p class="desc">Uses topological invariants to make perception models more robust to distribution shift.</p>
           <div class="links"><a href="https://ceur-ws.org/Vol-2916/">Proceedings</a></div>
         </div>
@@ -220,5 +218,7 @@
     </ol>
   </section>
 
-  <footer>Preprints without links are available on request.</footer>
+  <footer>Drafts without links are available on request.</footer>
 </main>
+</body>
+</html>
